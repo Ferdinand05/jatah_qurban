@@ -13,11 +13,18 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use TicketService;
 
 class TicketsTable
 {
+
+    protected $ticketService;
+    public function __construct(TicketService $ticketService)
+    {
+        $this->ticketService = $ticketService;
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -105,26 +112,9 @@ class TicketsTable
                     ->modalHeading('Hapus Seluruh Data?')
                     ->modalDescription('Tindakan ini akan menghapus semua tickets')
                     ->action(function () {
-                        Ticket::whereNotNull('qr_code_path')->get()->each(function ($ticket) {
-                            if ($ticket->qr_code_path && Storage::disk('public')->exists($ticket->qr_code_path)) {
-                                Storage::disk('public')->delete($ticket->qr_code_path);
-                            }
-                        });
 
-                        $ticketCount = Ticket::count();
-                        if ($ticketCount == 0) {
-                            Notification::make()
-                                ->warning()
-                                ->title("Tidak ada data tersedia")
-                                ->send();
-
-                            return;
-                        }
-
-                        DB::statement('SET FOREIGN_KEY_CHECKS=0');
-                        Ticket::truncate();
-                        DB::statement('SET FOREIGN_KEY_CHECKS=1');
-                        Notification::make()->success()->title('Semua data berhasil dihapus')->send();
+                        // Delete mass ticket service
+                        $this->ticketService->deleteMassTicket();
                     }),
 
                 BulkActionGroup::make([
