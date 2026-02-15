@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Tickets\Tables;
 
 use App\Models\Ticket;
+use App\Services\Ticket\TicketService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -14,16 +15,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
-use TicketService;
 
 class TicketsTable
 {
 
-    protected $ticketService;
-    public function __construct(TicketService $ticketService)
-    {
-        $this->ticketService = $ticketService;
-    }
+
 
     public static function configure(Table $table): Table
     {
@@ -113,8 +109,8 @@ class TicketsTable
                     ->modalDescription('Tindakan ini akan menghapus semua tickets')
                     ->action(function () {
 
-                        // Delete mass ticket service
-                        $this->ticketService->deleteMassTicket();
+                        $ticketService = new TicketService();
+                        $ticketService->deleteMassTicket();
                     }),
 
                 BulkActionGroup::make([

@@ -5,18 +5,18 @@ namespace App\Filament\Resources\Tickets\Pages;
 use App\Filament\Pages\ScanTicket;
 use App\Filament\Resources\Tickets\TicketResource;
 use App\Models\Distribution;
+use App\Services\Ticket\TicketService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Icons\Heroicon;
-use TicketService;
 
 class ListTickets extends ListRecords
 {
     protected static string $resource = TicketResource::class;
     protected $ticketService;
 
-    public function __construct(TicketService $ticketService)
+    public function boot(TicketService $ticketService)
     {
 
         $this->ticketService = $ticketService;

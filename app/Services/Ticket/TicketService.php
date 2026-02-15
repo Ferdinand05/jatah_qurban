@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Services\Ticket;
+
+
 use App\Models\Distribution;
 use App\Models\Household;
 use App\Models\Ticket;
@@ -9,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class TicketService
 {
