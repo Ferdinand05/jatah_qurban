@@ -19,7 +19,8 @@ class StatsOverview extends StatsOverviewWidget
                 ->description("Jumlah Pendistribusian"),
             Stat::make('Warga', Household::count())
                 ->icon(Heroicon::Home)
-                ->description("Jumlah data Warga"),
+                ->description("Jumlah data Warga")
+                ->descriptionColor("info"),
             Stat::make('Ticket Diterbitkan', Ticket::where("status", "issued")->count())
                 ->icon(Heroicon::CheckCircle)
                 ->description("Ticket yang sudah diterbitkan, dan belum digunakan"),
