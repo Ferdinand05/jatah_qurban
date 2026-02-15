@@ -16,17 +16,20 @@ class StatsOverview extends StatsOverviewWidget
         return [
             Stat::make('Distribusi', Distribution::count())
                 ->icon(Heroicon::ClipboardDocumentList)
-                ->description("Jumlah Pendistribusian"),
+                ->description("Jumlah Pendistribusian")
+                ->descriptionColor("info"),
             Stat::make('Warga', Household::count())
                 ->icon(Heroicon::Home)
                 ->description("Jumlah data Warga")
                 ->descriptionColor("info"),
             Stat::make('Ticket Diterbitkan', Ticket::where("status", "issued")->count())
                 ->icon(Heroicon::CheckCircle)
-                ->description("Ticket yang sudah diterbitkan, dan belum digunakan"),
+                ->description("Ticket yang sudah diterbitkan, dan belum digunakan")
+                ->descriptionColor("primary"),
             Stat::make('Ticket Digunakan', Ticket::where("status", "used")->count())
                 ->icon(Heroicon::CheckBadge)
                 ->description('Ticket yang sudah di berhasil di Scan QR')
+                ->descriptionColor("primary"),
         ];
     }
 }
