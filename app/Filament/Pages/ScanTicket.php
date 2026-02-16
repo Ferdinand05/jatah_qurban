@@ -80,7 +80,7 @@ class ScanTicket extends Page
             // refresh data
             $this->ticket->refresh();
 
-            $this->message = 'Daging diserahkan!';
+            $this->message = "Daging " . $this->household->kepala_keluarga .  " diserahkan!";
             $this->status = "Berhasil";
 
             $this->createLog($this->message, "success");
