@@ -20,14 +20,18 @@ class TicketsTable
 {
 
 
-
     public static function configure(Table $table): Table
     {
         return $table
+            ->deferLoading()
+            ->poll("5s")
+            ->striped()
+            ->reorderableColumns()
             ->columns([
                 TextColumn::make("status")
                     ->label("Status")
                     ->badge()
+                    ->toggleable()
                     ->color(fn($state) => match ($state) {
                         'issued' => 'success',
                         'used' => 'info',
@@ -36,25 +40,35 @@ class TicketsTable
                     })
                     ->sortable(),
                 TextColumn::make("distribution.name")
-                    ->label("Distribusi"),
+                    ->label("Distribusi")
+                    ->toggleable(),
                 TextColumn::make("household.kepala_keluarga")
                     ->description(fn($record) => ($record->household->alamat ?? '-'))
                     ->label("Kepala Keluarga")
+                    ->toggleable()
+
                     ->searchable(),
                 TextColumn::make("issued_at")
                     ->label("Diterbitkan")
                     ->sortable()
+                    ->toggleable()
+
                     ->dateTime(),
                 ImageColumn::make("qr_code_path")
                     ->label("QR Code")
                     ->square()
+                    ->toggleable()
+
                     ->imageSize(60),
                 TextColumn::make("used_at")
                     ->label('Digunakan Tgl')
                     ->dateTime()
+                    ->toggleable()
+
                     ->sortable(),
                 TextColumn::make("processor.name")
                     ->label("Staff")
+                    ->toggleable()
                     ->sortable()
 
             ])
@@ -86,16 +100,18 @@ class TicketsTable
                             $record->qr_code_path,
                             'tiket-' . $record->household->kepala_keluarga . '.svg'
                         );
-                    }),
-
+                    })
+                    ->hidden(fn(Ticket $record) => in_array($record->status, ["used", "expired"])),
                 Action::make("Whatsapp")
                     ->link()
                     ->url(function (Ticket $record) {
                         return "https://api.whatsapp.com/send?phone=" . $record->household->no_hp . "&text=Ticket%20QR%20code%20%2C%20untuk%20pendistribusian%20Daging%20Qurban";
                     })
                     ->openUrlInNewTab()
-                    ->icon(Heroicon::Phone),
-                DeleteAction::make(),
+                    ->icon(Heroicon::Phone)
+                    ->hidden(fn(Ticket $record) => in_array($record->status, ["used", "expired"])),
+                DeleteAction::make()
+                    ->requiresConfirmation(),
 
             ])
             ->toolbarActions([
