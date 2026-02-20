@@ -31,7 +31,9 @@ class HouseholdForm
                     ->required()
                     ->label("Telepon"),
                 TextInput::make("email")
-                    ->email(),
+                    ->email()
+                    ->required()
+                    ->unique("households", "email", ignoreRecord: true),
             ]);
     }
 }

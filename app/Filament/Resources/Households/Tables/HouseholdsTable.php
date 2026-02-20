@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Households\Tables;
 
+use App\Services\Household\HouseholdService;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -42,6 +45,15 @@ class HouseholdsTable
                 EditAction::make(),
             ])
             ->toolbarActions([
+                Action::make("deleteMass")
+                    ->label("Hapus semua")
+                    ->icon(Heroicon::Trash)
+                    ->button()
+                    ->color("danger")
+                    ->action(function () {
+                        $householdService = new HouseholdService();
+                        $householdService->deleteMasHousehold();
+                    }),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
