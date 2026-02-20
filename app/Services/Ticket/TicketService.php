@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -42,12 +43,12 @@ class TicketService
         $generated = 0;
 
         // generate ticket
-        foreach ($households->chunk(30) as $chunk) {
+        foreach ($households->chunk(25) as $chunk) {
             foreach ($chunk as $household) {
                 $token = (string) Str::uuid();
 
-                // generate qr dengan format svg
-                $svg = QrCode::format('svg')
+                // generate qr dengan format png
+                $png = QrCode::format('png')
                     ->size(300)
                     ->margin(1)
                     ->color(0, 0, 0)
@@ -55,8 +56,8 @@ class TicketService
                     ->generate($token);
 
                 // path file dan save ke storage
-                $filename = 'qrcodes/' . $token . '.svg';
-                Storage::disk('public')->put($filename, $svg);
+                $filename = 'qrcodes/' . $token . '.png';
+                Storage::disk('public')->put($filename, $png);
 
                 // create ticket
                 Ticket::create([
@@ -78,6 +79,8 @@ class TicketService
             ->body("Disimpan di: storage/qrcodes")
             ->icon(Heroicon::CheckCircle)
             ->send();
+
+        Log::info("{$generated} ticket...");
     }
 
 
@@ -101,6 +104,7 @@ class TicketService
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         Ticket::truncate();
+        Log::info("Deleted All Ticket...");
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
         Notification::make()->success()->title('Semua data berhasil dihapus')->send();
     }

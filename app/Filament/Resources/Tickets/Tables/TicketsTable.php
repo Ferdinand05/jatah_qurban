@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Tickets\Tables;
 
 use App\Models\Ticket;
+use App\Services\Ticket\TicketEmailService;
 use App\Services\Ticket\TicketService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -43,10 +44,9 @@ class TicketsTable
                     ->label("Distribusi")
                     ->toggleable(),
                 TextColumn::make("household.kepala_keluarga")
-                    ->description(fn($record) => ($record->household->alamat ?? '-'))
+                    ->description(fn($record) => ($record->household->email ?? '-'))
                     ->label("Kepala Keluarga")
                     ->toggleable()
-
                     ->searchable(),
                 TextColumn::make("issued_at")
                     ->label("Diterbitkan")
@@ -98,7 +98,7 @@ class TicketsTable
 
                         return Storage::disk('public')->download(
                             $record->qr_code_path,
-                            'tiket-' . $record->household->kepala_keluarga . '.svg'
+                            'tiket-' . $record->household->kepala_keluarga . '.png'
                         );
                     })
                     ->hidden(fn(Ticket $record) => in_array($record->status, ["used", "expired"])),
@@ -127,6 +127,27 @@ class TicketsTable
 
                         $ticketService = new TicketService();
                         $ticketService->deleteMassTicket();
+                    }),
+                Action::make("sendEmail")
+                    ->label("Kirim Email")
+                    ->icon(Heroicon::Envelope)
+                    ->color("gray")
+                    ->button()
+                    ->requiresConfirmation()
+                    ->modalHeading("Anda akan mengirim ticket ke semua email warga")
+                    ->action(function () {
+
+                        $tickets = Ticket::query()->with(["household", "distribution"])
+                            ->whereHas("household", function ($q) {
+                                $q->whereNotNull("email");
+                            })
+                            ->where("status", "issued")
+                            ->whereHas("distribution")
+
+                            ->get();
+
+                        $ticketEmailService = new TicketEmailService();
+                        $ticketEmailService->sendMassEmail($tickets);
                     }),
 
                 BulkActionGroup::make([
