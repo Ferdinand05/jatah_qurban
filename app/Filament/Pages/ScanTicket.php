@@ -63,7 +63,8 @@ class ScanTicket extends Page
             $this->status = "Gagal";
             $this->ticket = null;
             $this->household = null;
-            $this->createLog($this->message, "failed");
+            // $this->createLog($this->message, "failed");
+            ScanLog::logger($this->message, "failed", $this->ticket);
         }
     }
 
@@ -82,27 +83,14 @@ class ScanTicket extends Page
 
             $this->message = "Daging " . $this->household->kepala_keluarga .  " diserahkan!";
             $this->status = "Berhasil";
-
-            $this->createLog($this->message, "success");
+            ScanLog::logger($this->message, "success", $this->ticket);
         } else if ($this->ticket && $this->ticket->status === "used") {
             $this->message = "Ticket tidak bisa digunakan lagi." . "Pengunaan terakhir :" . $this->ticket->used_at;
             $this->status = "Gagal";
-            $this->createLog($this->message, "failed");
+            ScanLog::logger($this->message, "failed", $this->ticket);
         } else {
             $this->message = "Ticket TIDAK bisa digunakan, Check status dan ketersediaan ticket!";
             $this->status = "Gagal";
-            $this->createLog($this->message, "failed");
         }
-    }
-
-    public function createLog($message, $result)
-    {
-        ScanLog::create([
-            "ticket_id" => $this->ticket->id ?? null,
-            "user_id" => auth()->id(),
-            "scanned_at" => now(),
-            "message" => $message,
-            "result" => $result
-        ]);
     }
 }
