@@ -31,4 +31,15 @@ class ScanLog extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public static function logger($message, $status, $ticket)
+    {
+        static::create([
+            "ticket_id" => $ticket->id ?? null,
+            "user_id" => auth()->id(),
+            "scanned_at" => now(),
+            "message" => $message,
+            "result" => $status
+        ]);
+    }
 }
