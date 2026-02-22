@@ -84,10 +84,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "repositories": [{
-        "name": "packagist.org",
-        "type": "composer",
-        "url": "https://repo-eu-uk-1.packagist.org"
-    }]
+    "prefer-stable": true
 }
