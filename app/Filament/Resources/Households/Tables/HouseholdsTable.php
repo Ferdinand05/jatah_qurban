@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Households\Tables;
 
+use App\Filament\Imports\HouseholdImporter;
 use App\Services\Household\HouseholdService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -43,6 +45,15 @@ class HouseholdsTable
             ])
             ->recordActions([
                 EditAction::make(),
+            ])
+            ->headerActions([
+                ImportAction::make()
+                    ->importer(HouseholdImporter::class)
+                    ->label("Import Data")
+                    ->icon(Heroicon::DocumentPlus)
+                    ->maxRows(250)
+
+                    ->chunkSize(25)
             ])
             ->toolbarActions([
                 Action::make("deleteMass")
