@@ -57,7 +57,7 @@
 
             var html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", {
-                    fps: 20,
+                    fps: 30,
                     qrbox: {
                         width: 230,
                         height: 230
