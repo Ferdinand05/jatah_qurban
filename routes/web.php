@@ -1,10 +1,12 @@
 <?php
 
-use App\Mail\SendTicketEmail;
-use App\Models\Ticket;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\HouseholdRegistrationController;
 use Illuminate\Support\Facades\Route;
+
+
+// household view
+Route::get("/household/form", [HouseholdRegistrationController::class, "index"])
+    ->name('household.index');
 
 
 // Route::get('test/email', function () {

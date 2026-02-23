@@ -51,8 +51,7 @@ class HouseholdsTable
                     ->importer(HouseholdImporter::class)
                     ->label("Import Data")
                     ->icon(Heroicon::DocumentPlus)
-                    ->maxRows(250)
-
+                    ->maxRows(300)
                     ->chunkSize(25)
             ])
             ->toolbarActions([
